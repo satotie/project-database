@@ -1,0 +1,26 @@
+{{-- Shared dropdown items for the signed-in user menu. --}}
+<div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
+    <flux:avatar :name="auth()->user()->name" :initials="auth()->user()->initials()" />
+    <div class="grid flex-1 text-start text-sm leading-tight">
+        <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
+        <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
+    </div>
+</div>
+<flux:menu.separator />
+<flux:menu.radio.group>
+    @if (auth()->user()->isStaff())
+        <flux:menu.item :href="route('staff.dashboard')" icon="squares-2x2" wire:navigate>ระบบหลังร้าน</flux:menu.item>
+        <flux:menu.item :href="route('home')" icon="building-storefront" wire:navigate>หน้าร้าน</flux:menu.item>
+    @else
+        <flux:menu.item :href="route('account')" icon="user-circle" wire:navigate>ข้อมูลสมาชิก</flux:menu.item>
+        <flux:menu.item :href="route('orders.index')" icon="clipboard-document-list" wire:navigate>คำสั่งซื้อของฉัน</flux:menu.item>
+    @endif
+    <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
+</flux:menu.radio.group>
+<flux:menu.separator />
+<form method="POST" action="{{ route('logout') }}" class="w-full">
+    @csrf
+    <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full cursor-pointer" data-test="logout-button">
+        {{ __('Log out') }}
+    </flux:menu.item>
+</form>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#F1E7D8"/>
+  <path d="M58 205 C56 176 80 166 112 158 L176 126 C196 114 214 104 232 110 L252 136 C272 156 312 164 342 172 C364 178 368 198 362 212 L58 212 Z" fill="#E2D3BC" stroke="#C9A063" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M52 208 L366 208 C368 222 360 230 346 230 L70 230 C58 230 50 222 52 208 Z" fill="#FAF5EE" stroke="#C9A063" stroke-width="3"/>
+  <text x="200" y="272" font-size="16" text-anchor="middle" fill="#A47C3F" font-family="sans-serif">ไม่มีรูปภาพ</text>
+</svg>

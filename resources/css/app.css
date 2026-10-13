@@ -9,31 +9,31 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Prompt', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-    --color-zinc-50: #fafafa;
-    --color-zinc-100: #f5f5f5;
-    --color-zinc-200: #e5e5e5;
-    --color-zinc-300: #d4d4d4;
-    --color-zinc-400: #a3a3a3;
-    --color-zinc-500: #737373;
-    --color-zinc-600: #525252;
-    --color-zinc-700: #404040;
-    --color-zinc-800: #262626;
-    --color-zinc-900: #171717;
-    --color-zinc-950: #0a0a0a;
+    /* Warm neutrals instead of the default zinc so every Flux component matches the theme. */
+    --color-zinc-50: #fbf8f3;
+    --color-zinc-100: #f4eee5;
+    --color-zinc-200: #e8dfd2;
+    --color-zinc-300: #d6c9b6;
+    --color-zinc-400: #a8998a;
+    --color-zinc-500: #7d6e60;
+    --color-zinc-600: #5e5146;
+    --color-zinc-700: #45392f;
+    --color-zinc-800: #2e251e;
+    --color-zinc-900: #1f1813;
+    --color-zinc-950: #120d0a;
 
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
-    --color-accent-foreground: var(--color-white);
-}
+    --color-cream: #faf5ee;
+    --color-sand: #f1e7d8;
+    --color-gold: #c9a063;
+    --color-gold-dark: #a47c3f;
+    --color-brown: #5b3f2a;
+    --color-brown-dark: #3b2a1e;
 
-@layer theme {
-    .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
-    }
+    --color-accent: #c9a063;
+    --color-accent-content: #8a6634;
+    --color-accent-foreground: #2b1d12;
 }
 
 @layer base {
@@ -43,7 +43,7 @@
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: var(--color-zinc-200, currentColor);
     }
 }
 
@@ -64,3 +64,17 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+
+/* Shop components */
+@layer components {
+    .shop-card {
+        @apply rounded-2xl border border-zinc-200 bg-white shadow-[0_1px_2px_rgba(91,63,42,0.04)];
+    }
+    .shop-container {
+        @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    }
+}
+
+[x-cloak] {
+    display: none !important;
+}

@@ -29,9 +29,41 @@ class AuthenticationTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect(route('dashboard', absolute: false));
+            ->assertRedirect(route('home', absolute: false));
 
         $this->assertAuthenticated();
+    }
+
+    public function test_staff_are_redirected_to_staff_dashboard_after_login(): void
+    {
+        $user = User::factory()->staff()->create();
+
+        $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ])->assertRedirect(route('staff.dashboard'));
+    }
+
+    public function test_inactive_user_cannot_login(): void
+    {
+        $user = User::factory()->inactive()->create();
+
+        $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ])->assertSessionHasErrors('email');
+
+        $this->assertGuest();
+    }
+
+    public function test_deactivated_user_is_logged_out_on_next_request(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $user->update(['is_active' => false]);
+
+        $this->get(route('profile.edit'))->assertRedirect(route('login'));
+        $this->assertGuest();
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void

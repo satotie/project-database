@@ -4,6 +4,12 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Http\Responses\LoginResponse;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
+use Laravel\Fortify\Contracts\TwoFactorLoginResponse as TwoFactorLoginResponseContract;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -18,6 +24,8 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(LoginResponseContract::class, LoginResponse::class);
+        $this->app->singleton(TwoFactorLoginResponseContract::class, LoginResponse::class);
         //
     }
 
@@ -38,6 +46,22 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::createUsersUsing(CreateNewUser::class);
+
+        Fortify::authenticateUsing(function (Request $request) {
+            $user = User::where('email', Str::lower($request->input('email')))->first();
+
+            if (! $user || ! Hash::check($request->input('password'), $user->password)) {
+                return null;
+            }
+
+            if (! $user->is_active) {
+                throw ValidationException::withMessages([
+                    Fortify::username() => 'บัญชีของคุณถูกระงับการใช้งาน กรุณาติดต่อเจ้าหน้าที่',
+                ]);
+            }
+
+            return $user;
+        });
     }
 
     /**
@@ -46,7 +70,6 @@ class FortifyServiceProvider extends ServiceProvider
     private function configureViews(): void
     {
         Fortify::loginView(fn () => view('pages::auth.login'));
-        Fortify::verifyEmailView(fn () => view('pages::auth.verify-email'));
         Fortify::twoFactorChallengeView(fn () => view('pages::auth.two-factor-challenge'));
         Fortify::confirmPasswordView(fn () => view('pages::auth.confirm-password'));
         Fortify::registerView(fn () => view('pages::auth.register'));

@@ -12,16 +12,20 @@ class DashboardTest extends TestCase
 
     public function test_guests_are_redirected_to_the_login_page(): void
     {
-        $response = $this->get(route('dashboard'));
-        $response->assertRedirect(route('login'));
+        $this->get(route('staff.dashboard'))->assertRedirect(route('login'));
     }
 
-    public function test_authenticated_users_can_visit_the_dashboard(): void
+    public function test_customer_cannot_access_staff_area(): void
     {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+        $this->actingAs(User::factory()->create())
+            ->get(route('staff.dashboard'))
+            ->assertForbidden();
+    }
 
-        $response = $this->get(route('dashboard'));
-        $response->assertOk();
+    public function test_staff_can_visit_the_dashboard(): void
+    {
+        $this->actingAs(User::factory()->staff()->create())
+            ->get(route('staff.dashboard'))
+            ->assertOk();
     }
 }

@@ -5,7 +5,9 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -34,6 +36,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
+    protected $attributes = ['role' => 'customer', 'is_active' => true];
+
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
@@ -71,5 +75,39 @@ class User extends Authenticatable implements PasskeyUser
     public function isCustomer(): bool
     {
         return $this->role === 'customer';
+    }
+
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    public function cartItems(): HasMany
+    {
+        return $this->hasMany(CartItem::class);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function cartCount(): int
+    {
+        return (int) $this->cartItems()->sum('quantity');
+    }
+
+    /** Only customers with a DELIVERED order containing the product may review it. */
+    public function canReview(Product $product): bool
+    {
+        return $this->isCustomer() && $this->orders()
+            ->where('status', OrderStatus::Delivered->value)
+            ->whereHas('items.variant', fn ($q) => $q->where('product_id', $product->id))
+            ->exists();
     }
 }

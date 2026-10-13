@@ -17,6 +17,7 @@ export default defineConfig({
                     weights: [400, 500, 600],
                 }),
                 bunny('Prompt', {
+                    subsets: ['thai', 'latin'],
                     weights: [300, 400, 500, 600, 700],
                 }),
             ],

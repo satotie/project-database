@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\User;
 
@@ -21,7 +22,7 @@ class OrderPolicy
     public function cancel(User $user, Order $order): bool
     {
         return $user->isStaff()
-            ? $order->status->canTransitionTo(\App\Enums\OrderStatus::Cancelled)
+            ? $order->status->canTransitionTo(OrderStatus::Cancelled)
             : $order->user_id === $user->id && $order->customerCanCancel();
     }
 }

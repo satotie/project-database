@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Enums\OrderStatus;
 use App\Models\Address;
 use App\Models\CartItem;
-use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Product;

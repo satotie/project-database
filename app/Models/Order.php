@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Enums\ShippingMethod;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -83,7 +84,7 @@ class Order extends Model
     public function canUploadSlip(): bool
     {
         return $this->status === OrderStatus::PendingPayment
-            && ! $this->payments->contains(fn (Payment $p) => $p->status === \App\Enums\PaymentStatus::Pending);
+            && ! $this->payments->contains(fn (Payment $p) => $p->status === PaymentStatus::Pending);
     }
 
     public function customerCanCancel(): bool

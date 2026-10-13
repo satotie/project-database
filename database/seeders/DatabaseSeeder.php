@@ -114,8 +114,8 @@ class DatabaseSeeder extends Seeder
                 ProductVariant::create([
                     'product_id' => $product->id,
                     'size' => (string) $size,
-                    // About 1 in 5 sizes is out of stock to demo the disabled size buttons.
-                    'stock' => mt_rand(1, 5) === 1 ? 0 : mt_rand(1, 15),
+                    // About 1 in 7 sizes is out of stock to demo the disabled size buttons.
+                    'stock' => mt_rand(1, 7) === 1 ? 0 : mt_rand(1, 15),
                     'sku' => strtoupper(Str::substr(Str::slug($brand, ''), 0, 3)).'-'.str_pad((string) $product->id, 3, '0', STR_PAD_LEFT).'-'.$size,
                 ]);
             }
@@ -216,6 +216,16 @@ class DatabaseSeeder extends Seeder
 
             $this->applyHistory($order, $status, $created, $staff);
         }
+
+        // Make sure "today's revenue" on the dashboard has something to show.
+        Order::where('status', OrderStatus::Paid)->latest('id')->first()?->update([
+            'created_at' => now()->subMinutes(90),
+            'paid_at' => now()->subMinutes(30),
+        ]);
+        Order::where('status', OrderStatus::Paid)->latest('id')->first()?->payments()->update([
+            'created_at' => now()->subMinutes(60),
+            'verified_at' => now()->subMinutes(30),
+        ]);
     }
 
     private function applyHistory(Order $order, OrderStatus $status, Carbon $created, User $staff): void

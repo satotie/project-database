@@ -28,7 +28,7 @@ class AddressFactory extends Factory
 
         return [
             'user_id' => User::factory(),
-            'recipient_name' => fake()->name(),
+            'recipient_name' => fake()->firstName().' '.fake()->lastName(),
             'phone' => '08'.fake()->numerify('########'),
             'address_line' => fake()->numberBetween(1, 299).'/'.fake()->numberBetween(1, 99).' ซอย'.fake()->numberBetween(1, 50).' ถนน'.fake()->randomElement(['สุขุมวิท', 'พหลโยธิน', 'รามคำแหง', 'นิมมานเหมินท์', 'มิตรภาพ', 'เพชรเกษม']),
             'district' => $district,
